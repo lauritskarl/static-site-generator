@@ -1,8 +1,10 @@
 import unittest
+from typing import cast
 
 from main import text_node_to_html_node
 from textnode import TextNode, TextType
 from htmlnode import LeafNode
+
 
 class TestTextNodeToHTMLNode(unittest.TestCase):
     def test_text_node_to_html_node_normal(self):
@@ -26,19 +28,30 @@ class TestTextNodeToHTMLNode(unittest.TestCase):
         self.assertEqual(text_node_to_html_node(text_node), expected_output)
 
     def test_text_node_to_html_node_links(self):
-        text_node = TextNode(text="Random text", text_type=TextType.LINKS, url="https://www.google.com")
-        expected_output = LeafNode(tag="a", value="Random text", props={"href": "https://www.google.com"})
+        text_node = TextNode(
+            text="Random text", text_type=TextType.LINKS, url="https://www.google.com"
+        )
+        expected_output = LeafNode(
+            tag="a", value="Random text", props={"href": "https://www.google.com"}
+        )
         self.assertEqual(text_node_to_html_node(text_node), expected_output)
 
     def test_text_node_to_html_node_images(self):
-        text_node = TextNode(text="Random text", text_type=TextType.IMAGES, url="https://www.image_link.com")
-        expected_output = LeafNode(tag="img", value="", props={"src": "https://www.image_link.com", "alt": "Random text"})
+        text_node = TextNode(
+            text="Random text",
+            text_type=TextType.IMAGES,
+            url="https://www.image_link.com",
+        )
+        expected_output = LeafNode(
+            tag="img",
+            value="",
+            props={"src": "https://www.image_link.com", "alt": "Random text"},
+        )
         self.assertEqual(text_node_to_html_node(text_node), expected_output)
 
     def test_text_node_to_html_node_invalid_text_type(self):
-        text_node = TextNode(text="Random text", text_type="OTHER")
         with self.assertRaises(Exception):
-            text_node_to_html_node(text_node)
+            TextNode(text="Random text", text_type=cast(TextType, "OTHER"))
 
 
 if __name__ == "__main__":

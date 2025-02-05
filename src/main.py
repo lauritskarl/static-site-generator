@@ -4,10 +4,11 @@ from htmlnode import LeafNode
 
 def main():
     text = "This is a text node"
-    text_type = TextType.BOLD.value
+    text_type = TextType.BOLD
     url = "https://www.boot.dev"
     text_node = TextNode(text, text_type, url)
     print(text_node)
+
 
 def text_node_to_html_node(text_node: TextNode):
     if text_node.text_type == TextType.NORMAL:
@@ -21,10 +22,11 @@ def text_node_to_html_node(text_node: TextNode):
     if text_node.text_type == TextType.LINKS:
         return LeafNode(tag="a", value=text_node.text, props={"href": text_node.url})
     if text_node.text_type == TextType.IMAGES:
-        return LeafNode(tag="img", value="", props={"src": text_node.url, "alt": text_node.text})
+        return LeafNode(
+            tag="img", value="", props={"src": text_node.url, "alt": text_node.text}
+        )
     raise Exception("TextNode is none of predefined types")
 
 
 if __name__ == "__main__":
     main()
-    text_node_to_html_node()

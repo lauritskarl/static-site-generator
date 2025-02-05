@@ -1,22 +1,25 @@
+from typing import Sequence
+
+
 class HTMLNode:
     def __init__(
         self,
-        tag: str = None,
-        value: str = None,
-        children: list["HTMLNode"] = None,
-        props: dict[str: str] = None,
+        tag: str = "",
+        value: str = "",
+        children: Sequence["HTMLNode"] = (),
+        props: dict[str, str] = {},
     ):
-        self.tag = tag
-        self.value = value
-        self.children = children
-        self.props = props
+        self.tag = tag if tag else ""
+        self.value = value if value else ""
+        self.children = list(children)
+        self.props = props if props else {}
 
     def to_html(self):
         raise NotImplementedError
 
     def props_to_html(self):
         if self.props:
-            return " ".join([f'{prop}="{value}"' for prop, value in self.props.items()]) 
+            return " ".join([f'{prop}="{value}"' for prop, value in self.props.items()])
         return ""
 
     def __repr__(self):
@@ -26,14 +29,14 @@ class HTMLNode:
 class LeafNode(HTMLNode):
     def __init__(
         self,
-        tag: str = None,  # Optional
-        value: str = None,  # Required
-        props: dict[str: str] = None  # Optional
+        value: str,
+        tag: str = "",
+        props: dict[str, str] = {},
     ):
         super().__init__(
-            tag=tag,
+            tag=tag if tag else "",
             value=value,
-            props=props,
+            props=props if props else {},
         )
 
     def __eq__(self, other):
@@ -51,22 +54,18 @@ class LeafNode(HTMLNode):
         if not self.tag:
             return self.value
         if not self.props:
-            return f'<{self.tag}>{self.value}</{self.tag}>'
-        return f'<{self.tag} {self.props_to_html()}>{self.value}</{self.tag}>'
+            return f"<{self.tag}>{self.value}</{self.tag}>"
+        return f"<{self.tag} {self.props_to_html()}>{self.value}</{self.tag}>"
 
 
 class ParentNode(HTMLNode):
     def __init__(
         self,
-        tag: str,  # Required
-        children: list["HTMLNode"],  # Required
-        props: dict[str: str] = None  # Optional
+        tag: str,
+        children: Sequence["HTMLNode"],
+        props: dict[str, str] = {},
     ):
-        super().__init__(
-            tag=tag,
-            children=children,
-            props=props
-        )
+        super().__init__(tag=tag, children=children, props=props if props else {})
 
     def to_html(self):
         if not self.tag:
@@ -77,5 +76,5 @@ class ParentNode(HTMLNode):
         for child in self.children:
             result += child.to_html()
         if not self.props:
-            return f'<{self.tag}>{result}</{self.tag}>'
-        return f'<{self.tag} {self.props_to_html()}>{result}</{self.tag}>'
+            return f"<{self.tag}>{result}</{self.tag}>"
+        return f"<{self.tag} {self.props_to_html()}>{result}</{self.tag}>"
