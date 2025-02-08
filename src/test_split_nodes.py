@@ -7,7 +7,7 @@ from textnode import TextNode, TextType
 class TestSplitNodesDelimiter(unittest.TestCase):
     def test_split_nodes_delimiter_code_delimiter(self):
         node = TextNode("This is text with a `code block` word", TextType.TEXT)
-        new_nodes = split_nodes_delimiter([node], "`", TextType.CODE)
+        new_nodes = split_nodes_delimiter([node], "`")
         expected_output = [
             TextNode("This is text with a ", TextType.TEXT),
             TextNode("code block", TextType.CODE),

@@ -2,11 +2,15 @@ from textnode import TextType, TextNode
 from extract_markdown import extract_markdown_images, extract_markdown_links
 
 
-def split_nodes_delimiter(old_nodes, delimiter, text_type):
+def split_nodes_delimiter(old_nodes, delimiter):
     new_nodes = []
     for old_node in old_nodes:
-        if old_node.text_type != TextType.TEXT:
+        if old_node.text_type != TextType.TEXT:  # Means node is already a "split" node.
             new_nodes.append(old_node)
+            continue
+        elif not delimiter in old_node.text:  # Possibly broken solution to extract raw text without markdown elements.
+            new_nodes.append(old_node)
+            continue
         elif old_node.text.count(delimiter) != 2:
             raise Exception("Invalid Markdown syntax")
         else:
