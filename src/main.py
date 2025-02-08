@@ -1,6 +1,6 @@
-from src.extract_markdown import extract_markdown_images, extract_markdown_links
 from textnode import TextType, TextNode
 from htmlnode import LeafNode
+from split_nodes import split_nodes_delimiter, split_nodes_image, split_nodes_link
 
 
 def main():
@@ -27,6 +27,16 @@ def text_node_to_html_node(text_node: TextNode):
             tag="img", value="", props={"src": text_node.url, "alt": text_node.text}
         )
     raise Exception("TextNode is none of predefined types")
+
+
+def text_to_textnodes(text):
+    input_nodes = [TextNode(text, TextType.TEXT)]
+    bold_split = split_nodes_delimiter(input_nodes, "**")
+    italic_split = split_nodes_delimiter(bold_split, "*")
+    code_split = split_nodes_delimiter(italic_split, "`")
+    image_split = split_nodes_image(code_split)
+    link_split = split_nodes_link(image_split)
+    return link_split
 
 
 if __name__ == "__main__":
