@@ -39,5 +39,29 @@ def text_to_textnodes(text):
     return link_split
 
 
+def markdown_to_blocks(markdown):
+    blocks = markdown.split("\n\n")
+    filtered_blocks = [block.strip() for block in blocks if block.strip()]
+    return filtered_blocks
+
+
+def block_to_block_type(block):
+    if block.startswith("#"):
+        splits = block.split(" ")
+        if splits[0].count("#") <= 6:
+            return "heading"
+    elif block.startswith("```") and block.endswith("```"):
+        return "code"
+    elif block.startswith(">"):
+        if all(line.startswith(">") for line in block.split("\n")):
+            return "quote"
+    elif block.startswith("* ") or block.startswith("- "):
+        if all(line.startswith("* ") or line.startswith("- ") for line in block.split("\n")):
+            return "unordered_list"
+    elif all(len(line.split('. ', 1)) > 1 and line.split('. ', 1)[0].isdigit() for line in block.split("\n")):
+        return "ordered_list"
+    return "paragraph"
+
+
 if __name__ == "__main__":
     main()
