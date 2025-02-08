@@ -8,7 +8,7 @@ from htmlnode import LeafNode
 
 class TestTextNodeToHTMLNode(unittest.TestCase):
     def test_text_node_to_html_node_normal(self):
-        text_node = TextNode(text="Random text", text_type=TextType.NORMAL)
+        text_node = TextNode(text="Random text", text_type=TextType.TEXT)
         expected_output = LeafNode(value="Random text")
         self.assertEqual(text_node_to_html_node(text_node), expected_output)
 
@@ -29,7 +29,7 @@ class TestTextNodeToHTMLNode(unittest.TestCase):
 
     def test_text_node_to_html_node_links(self):
         text_node = TextNode(
-            text="Random text", text_type=TextType.LINKS, url="https://www.google.com"
+            text="Random text", text_type=TextType.LINK, url="https://www.google.com"
         )
         expected_output = LeafNode(
             tag="a", value="Random text", props={"href": "https://www.google.com"}
@@ -39,7 +39,7 @@ class TestTextNodeToHTMLNode(unittest.TestCase):
     def test_text_node_to_html_node_images(self):
         text_node = TextNode(
             text="Random text",
-            text_type=TextType.IMAGES,
+            text_type=TextType.IMAGE,
             url="https://www.image_link.com",
         )
         expected_output = LeafNode(

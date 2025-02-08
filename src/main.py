@@ -1,3 +1,4 @@
+from src.extract_markdown import extract_markdown_images, extract_markdown_links
 from textnode import TextType, TextNode
 from htmlnode import LeafNode
 
@@ -11,7 +12,7 @@ def main():
 
 
 def text_node_to_html_node(text_node: TextNode):
-    if text_node.text_type == TextType.NORMAL:
+    if text_node.text_type == TextType.TEXT:
         return LeafNode(value=text_node.text)
     if text_node.text_type == TextType.BOLD:
         return LeafNode(tag="b", value=text_node.text)
@@ -19,9 +20,9 @@ def text_node_to_html_node(text_node: TextNode):
         return LeafNode(tag="i", value=text_node.text)
     if text_node.text_type == TextType.CODE:
         return LeafNode(tag="code", value=text_node.text)
-    if text_node.text_type == TextType.LINKS:
+    if text_node.text_type == TextType.LINK:
         return LeafNode(tag="a", value=text_node.text, props={"href": text_node.url})
-    if text_node.text_type == TextType.IMAGES:
+    if text_node.text_type == TextType.IMAGE:
         return LeafNode(
             tag="img", value="", props={"src": text_node.url, "alt": text_node.text}
         )
