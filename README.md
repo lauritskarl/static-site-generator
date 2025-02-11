@@ -1,4 +1,10 @@
 # static-site-generator
+
+<!--toc:start-->
+- [static-site-generator](#static-site-generator)
+  - [TODO:](#todo)
+<!--toc:end-->
+
 boot.dev Static Site Generator project
 
 ## TODO:
