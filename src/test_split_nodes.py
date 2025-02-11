@@ -18,7 +18,10 @@ class TestSplitNodesDelimiter(unittest.TestCase):
 
 class TestSplitNodesImage(unittest.TestCase):
     def test_split_nodes_image(self):
-        node = TextNode("This is text with an image ![to boot dev](https://www.boot.dev)", TextType.TEXT)
+        node = TextNode(
+            "This is text with an image ![to boot dev](https://www.boot.dev)",
+            TextType.TEXT,
+        )
         nodes = split_nodes_image([node])
         self.assertEqual(len(nodes), 2)
         self.assertEqual(nodes[0].text, "This is text with an image ")
@@ -48,7 +51,10 @@ class TestSplitNodesImage(unittest.TestCase):
 
 class TestSplitNodesLink(unittest.TestCase):
     def test_split_nodes_link(self):
-        node = TextNode("This is text with a link [to boot dev](https://www.boot.dev)", TextType.TEXT)
+        node = TextNode(
+            "This is text with a link [to boot dev](https://www.boot.dev)",
+            TextType.TEXT,
+        )
         nodes = split_nodes_link([node])
         self.assertEqual(len(nodes), 2)
         self.assertEqual(nodes[0].text, "This is text with a link ")

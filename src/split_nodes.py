@@ -8,7 +8,9 @@ def split_nodes_delimiter(old_nodes, delimiter):
         if old_node.text_type != TextType.TEXT:  # Means node is already a "split" node.
             new_nodes.append(old_node)
             continue
-        elif not delimiter in old_node.text:  # Possibly broken solution to extract raw text without markdown elements.
+        elif (
+            delimiter not in old_node.text
+        ):  # Possibly broken solution to extract raw text without markdown elements.
             new_nodes.append(old_node)
             continue
         elif old_node.text.count(delimiter) != 2:
@@ -33,7 +35,6 @@ def split_nodes_image(old_nodes):
     for old_node in old_nodes:
         current_text = old_node.text
         matches = extract_markdown_images(current_text)
-
         if not current_text:
             continue
         if not matches:
@@ -43,20 +44,15 @@ def split_nodes_image(old_nodes):
             image_alt, image_link = match
             image_markdown = f"![{image_alt}]({image_link})"
             parts = current_text.split(image_markdown, 1)
-
             if parts[0]:
                 new_nodes.append(TextNode(parts[0], TextType.TEXT))
-
             new_nodes.append(TextNode(image_alt, TextType.IMAGE, image_link))
-
             if len(parts) > 1:
                 current_text = parts[1]
             else:
                 current_text = ""
-
         if current_text:
             new_nodes.append(TextNode(current_text, TextType.TEXT))
-
     return new_nodes
 
 
@@ -65,7 +61,6 @@ def split_nodes_link(old_nodes):
     for old_node in old_nodes:
         current_text = old_node.text
         matches = extract_markdown_links(current_text)
-
         if not current_text:
             continue
         if not matches:
@@ -75,18 +70,13 @@ def split_nodes_link(old_nodes):
             link_text, link = match
             link_markdown = f"[{link_text}]({link})"
             parts = current_text.split(link_markdown, 1)
-
             if parts[0]:
                 new_nodes.append(TextNode(parts[0], TextType.TEXT))
-
             new_nodes.append(TextNode(link_text, TextType.LINK, link))
-
             if len(parts) > 1:
                 current_text = parts[1]
             else:
                 current_text = ""
-
         if current_text:
             new_nodes.append(TextNode(current_text, TextType.TEXT))
-
     return new_nodes

@@ -1,5 +1,7 @@
+import re
+
 from textnode import TextType, TextNode
-from htmlnode import LeafNode
+from htmlnode import HTMLNode, LeafNode
 from split_nodes import split_nodes_delimiter, split_nodes_image, split_nodes_link
 
 
@@ -56,11 +58,69 @@ def block_to_block_type(block):
         if all(line.startswith(">") for line in block.split("\n")):
             return "quote"
     elif block.startswith("* ") or block.startswith("- "):
-        if all(line.startswith("* ") or line.startswith("- ") for line in block.split("\n")):
+        if all(
+            line.startswith("* ") or line.startswith("- ") for line in block.split("\n")
+        ):
             return "unordered_list"
-    elif all(len(line.split('. ', 1)) > 1 and line.split('. ', 1)[0].isdigit() for line in block.split("\n")):
+    elif all(
+        len(line.split(". ", 1)) > 1 and line.split(". ", 1)[0].isdigit()
+        for line in block.split("\n")
+    ):
         return "ordered_list"
     return "paragraph"
+
+
+def markdown_to_html_node(markdown):
+    nodes = []
+    blocks = markdown_to_blocks(markdown)
+    for block in blocks:
+        block_type = block_to_block_type(block)
+        if block_type == "paragraph":
+            nodes.append(HTMLNode(tag="p", children=text_to_children(block)))
+        elif block_type == "heading":
+            heading_level = block.count("#")
+            heading = " ".join(block.split(" ")[1:])
+            nodes.append(
+                HTMLNode(tag=f"h{heading_level}", children=text_to_children(heading))
+            )
+        elif block_type == "code":
+            code_leaves = []
+            code_lines = block.split("```")[1:-1]
+            for code in code_lines:
+                code_leaves.append(HTMLNode(tag="code", value=code))
+            nodes.append(HTMLNode(tag="pre", children=code_leaves))
+        elif block_type == "quote":
+            whole_quote = []
+            quote_lines = block.split("\n")
+            for quote in quote_lines:
+                whole_quote.append(quote.split(">")[1])
+            whole_quote = " ".join(whole_quote)
+            nodes.append(
+                HTMLNode(tag="blockquote", children=text_to_children(whole_quote))
+            )
+        elif block_type == "unordered_list":
+            ul_pattern = r"^[\*\-]\s"
+            ul_leaves = []
+            for ul_leaf in re.split(ul_pattern, block):
+                if ul_leaf.strip():
+                    ul_leaves.append(
+                        HTMLNode(tag="li", children=text_to_children(ul_leaf.strip()))
+                    )
+            nodes.append(HTMLNode(tag="ul", children=ul_leaves))
+        elif block_type == "ordered_list":
+            ol_pattern = r"^\d+\.\s"
+            ol_leaves = []
+            for ol_leaf in re.split(ol_pattern, block):
+                if ol_leaf.strip():
+                    ol_leaves.append(
+                        HTMLNode(tag="li", children=text_to_children(ol_leaf.strip()))
+                    )
+            nodes.append(HTMLNode(tag="ol", children=ol_leaves))
+    return HTMLNode(tag="div", children=nodes)
+
+
+def text_to_children(text):
+    pass
 
 
 if __name__ == "__main__":
