@@ -42,7 +42,7 @@ no title
 """
             )
             self.fail("Should have raised an exception")
-        except Exception as e:
+        except Exception:
             pass
 
 
